@@ -4,13 +4,11 @@ services:
     name: prosperia-web
     runtime: node
     plan: free
-    region: frankfurt
     rootDir: apps/web
     buildCommand: "npm ci && npm run build"
     startCommand: "npm start"
     autoDeploy: true
     envVars:
-      # Use internal networking: expose host/port and let the app compose the URL.
       - key: NEXT_PUBLIC_API_HOST
         fromService:
           name: prosperia-api
@@ -27,7 +25,6 @@ services:
     name: prosperia-api
     runtime: node
     plan: free
-    region: frankfurt
     rootDir: apps/api
     buildCommand: "npm ci && npm run build"
     startCommand: "node dist/main.js"
@@ -49,7 +46,6 @@ services:
     name: prosperia-worker
     runtime: node
     plan: free
-    region: frankfurt
     rootDir: apps/worker
     buildCommand: "npm ci && npm run build"
     startCommand: "node dist/index.js"
@@ -61,14 +57,12 @@ services:
           type: keyvalue
           property: connectionString
 
-  # Redis (Render Key Value) — must be declared under services with type: keyvalue
+  # Redis (Render Key Value)
   - type: keyvalue
     name: prosperia-kv
     plan: free
-    region: frankfurt
-    ipAllowList: []  # empty list = only internal connections
+    ipAllowList: []
 
 databases:
   - name: prosperia-db
     plan: free
-    region: frankfurt
