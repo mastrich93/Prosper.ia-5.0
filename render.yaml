@@ -1,7 +1,8 @@
 services:
+  # Frontend (Next.js)
   - type: web
     name: prosperia-web
-    env: node
+    runtime: node
     plan: free
     region: frankfurt
     rootDir: apps/web
@@ -9,14 +10,22 @@ services:
     startCommand: "npm start"
     autoDeploy: true
     envVars:
-      - key: NEXT_PUBLIC_API_URL
+      # Use internal networking: expose host/port and let the app compose the URL.
+      - key: NEXT_PUBLIC_API_HOST
         fromService:
           name: prosperia-api
-          property: url
+          type: web
+          property: host
+      - key: NEXT_PUBLIC_API_PORT
+        fromService:
+          name: prosperia-api
+          type: web
+          property: port
 
+  # API (NestJS)
   - type: web
     name: prosperia-api
-    env: node
+    runtime: node
     plan: free
     region: frankfurt
     rootDir: apps/api
@@ -31,12 +40,14 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
-          name: prosperia-redis
+          name: prosperia-kv
+          type: keyvalue
           property: connectionString
 
+  # Background worker
   - type: worker
     name: prosperia-worker
-    env: node
+    runtime: node
     plan: free
     region: frankfurt
     rootDir: apps/worker
@@ -46,17 +57,18 @@ services:
     envVars:
       - key: REDIS_URL
         fromService:
-          name: prosperia-redis
+          name: prosperia-kv
+          type: keyvalue
           property: connectionString
 
-databases:
-  - type: postgresql
-    name: prosperia-db
+  # Redis (Render Key Value) — must be declared under services with type: keyvalue
+  - type: keyvalue
+    name: prosperia-kv
     plan: free
     region: frankfurt
+    ipAllowList: []  # empty list = only internal connections
 
-caches:
-  - type: redis
-    name: prosperia-redis
+databases:
+  - name: prosperia-db
     plan: free
     region: frankfurt
