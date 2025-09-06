@@ -1,0 +1,73 @@
+// Prisma schema for Prosperia
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum LeadStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  OFFERED
+  PURCHASED
+  REFUNDED
+  EXPIRED
+}
+
+model Lead {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  status      LeadStatus @default(PENDING_REVIEW)
+  sector      String
+  city        String
+  province    String
+  cap         String
+  budget      Int?
+  urgency     Int? // 0..100
+  description String
+  emailEnc    Bytes
+  phoneEnc    Bytes?
+  emailHash   String     @unique
+  phoneHash   String?
+  otpVerified Boolean    @default(false)
+  price       Decimal?
+  score       Float?
+  consents    Consent[]
+}
+
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  sectors   String[]
+  city      String?
+  province  String?
+  cap       String?
+  source    String?
+  matches   Match[]
+}
+
+model Match {
+  id             String   @id @default(cuid())
+  leadId         String
+  companyId      String
+  rank           Int
+  state          String
+  exclusiveUntil DateTime?
+  lead           Lead     @relation(fields: [leadId], references: [id])
+  company        Company  @relation(fields: [companyId], references: [id])
+  @@index([leadId, companyId])
+}
+
+model Consent {
+  id        String   @id @default(cuid())
+  leadId    String
+  text      String
+  timestamp DateTime @default(now())
+  lead      Lead     @relation(fields: [leadId], references: [id])
+}

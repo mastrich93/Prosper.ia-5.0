@@ -1,0 +1,85 @@
+services:
+  - type: web
+    name: prosperia-web
+    rootDir: apps/web
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
+
+  - type: web
+    name: prosperia-api
+    rootDir: apps/api
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_CLIENT_ID
+        sync: false
+      - key: GMAIL_CLIENT_SECRET
+        sync: false
+      - key: GMAIL_REFRESH_TOKEN
+        sync: false
+      - key: STRIPE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: PAYPAL_CLIENT
+        sync: false
+      - key: PAYPAL_SECRET
+        sync: false
+      - key: GMAPS_KEY
+        sync: false
+      - key: WABA_PHONE_ID
+        sync: false
+      - key: WABA_TOKEN
+        sync: false
+
+  - type: worker
+    name: prosperia-worker
+    rootDir: apps/worker
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: REDIS_URL
+        sync: false
+      - key: GMAPS_KEY
+        sync: false
+      - key: STRIPE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: PAYPAL_CLIENT
+        sync: false
+      - key: PAYPAL_SECRET
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_CLIENT_ID
+        sync: false
+      - key: GMAIL_CLIENT_SECRET
+        sync: false
+      - key: GMAIL_REFRESH_TOKEN
+        sync: false
+      - key: WABA_PHONE_ID
+        sync: false
+      - key: WABA_TOKEN
+        sync: false
+
+databases:
+  - type: postgresql
+    name: prosperia-db
+    plan: free
+
+caches:
+  - type: redis
+    name: prosperia-redis
+    plan: free

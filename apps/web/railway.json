@@ -1,0 +1,13 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    // Install dependencies and build the Next.js app.  `npm ci` uses
+    // the package-lock to ensure reproducible installs.
+    "buildCommand": "npm ci && npm run build"
+  },
+  "deploy": {
+    // Start the Next.js server.  `-H 0.0.0.0` ensures the app binds
+    // to all network interfaces so Railway can forward traffic to it.
+    "startCommand": "next start -p $PORT -H 0.0.0.0"
+  }
+}

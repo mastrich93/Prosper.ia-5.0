@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./apps/api
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+  web:
+    build: ./apps/web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+  worker:
+    build: ./apps/worker
+    depends_on:
+      - api
+
+  # Optional: add postgres/redis services if needed

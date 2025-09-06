@@ -1,0 +1,16 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    // Install dependencies and compile the NestJS project
+    "buildCommand": "npm ci && npm run build"
+  },
+  "deploy": {
+    // Start the compiled server. The PORT environment variable is
+    // automatically provided by Railway.
+    "startCommand": "node dist/main.js",
+    // Use a lightweight health endpoint for the health check.  The
+    // health.controller.ts added in this repository responds with 200
+    // on `/health`, ensuring Railway marks the service as healthy.
+    "healthcheckPath": "/health"
+  }
+}

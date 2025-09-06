@@ -1,0 +1,12 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    // Install dependencies and compile the worker TypeScript source.
+    "buildCommand": "npm ci && npm run build"
+  },
+  "deploy": {
+    // Run the compiled worker.  The worker listens on the Redis
+    // instance defined by REDIS_URL (see src/index.ts for details).
+    "startCommand": "node dist/index.js"
+  }
+}
