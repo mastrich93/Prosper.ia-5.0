@@ -1,85 +1,62 @@
 services:
   - type: web
     name: prosperia-web
+    env: node
+    plan: free
+    region: frankfurt
     rootDir: apps/web
-    buildCommand: npm install && npm run build
-    startCommand: npm start
+    buildCommand: "npm ci && npm run build"
+    startCommand: "npm start"
+    autoDeploy: true
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        sync: false
+        fromService:
+          name: prosperia-api
+          property: url
 
   - type: web
     name: prosperia-api
+    env: node
+    plan: free
+    region: frankfurt
     rootDir: apps/api
-    buildCommand: npm install && npm run build
-    startCommand: npm run start:prod
+    buildCommand: "npm ci && npm run build"
+    startCommand: "node dist/main.js"
+    autoDeploy: true
+    healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: prosperia-db
+          property: connectionString
       - key: REDIS_URL
-        sync: false
-      - key: JWT_SECRET
-        sync: false
-      - key: GMAIL_USER
-        sync: false
-      - key: GMAIL_CLIENT_ID
-        sync: false
-      - key: GMAIL_CLIENT_SECRET
-        sync: false
-      - key: GMAIL_REFRESH_TOKEN
-        sync: false
-      - key: STRIPE_KEY
-        sync: false
-      - key: STRIPE_WEBHOOK_SECRET
-        sync: false
-      - key: PAYPAL_CLIENT
-        sync: false
-      - key: PAYPAL_SECRET
-        sync: false
-      - key: GMAPS_KEY
-        sync: false
-      - key: WABA_PHONE_ID
-        sync: false
-      - key: WABA_TOKEN
-        sync: false
+        fromService:
+          name: prosperia-redis
+          property: connectionString
 
   - type: worker
     name: prosperia-worker
+    env: node
+    plan: free
+    region: frankfurt
     rootDir: apps/worker
-    buildCommand: npm install && npm run build
-    startCommand: npm run start
+    buildCommand: "npm ci && npm run build"
+    startCommand: "node dist/index.js"
+    autoDeploy: true
     envVars:
       - key: REDIS_URL
-        sync: false
-      - key: GMAPS_KEY
-        sync: false
-      - key: STRIPE_KEY
-        sync: false
-      - key: STRIPE_WEBHOOK_SECRET
-        sync: false
-      - key: PAYPAL_CLIENT
-        sync: false
-      - key: PAYPAL_SECRET
-        sync: false
-      - key: GMAIL_USER
-        sync: false
-      - key: GMAIL_CLIENT_ID
-        sync: false
-      - key: GMAIL_CLIENT_SECRET
-        sync: false
-      - key: GMAIL_REFRESH_TOKEN
-        sync: false
-      - key: WABA_PHONE_ID
-        sync: false
-      - key: WABA_TOKEN
-        sync: false
+        fromService:
+          name: prosperia-redis
+          property: connectionString
 
 databases:
   - type: postgresql
     name: prosperia-db
     plan: free
+    region: frankfurt
 
 caches:
   - type: redis
     name: prosperia-redis
     plan: free
+    region: frankfurt
